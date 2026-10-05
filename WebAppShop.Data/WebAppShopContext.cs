@@ -13,5 +13,6 @@ namespace WebAppShop.Data
         }
 
         public DbSet<Spaceship> Spaceships { get; set; }
+        public DbSet<Kindergarten> Kindergartens { get; set; }
     }
 }
