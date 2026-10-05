@@ -1,3 +1,6 @@
 <Solution>
+  <Project Path="WebAppShop.ApplicationServices/WebAppShop.ApplicationServices.csproj" Id="374174be-994c-4d00-b58f-4c124ec44c9c" />
+  <Project Path="WebAppShop.Core/WebAppShop.Core.csproj" Id="9f48109e-68b3-4769-b7c3-0c9d94816557" />
+  <Project Path="WebAppShop.Data/WebAppShop.Data.csproj" Id="53f0e9ac-a427-46b8-a7ad-4fbeaf1b8642" />
   <Project Path="WebAppShop/WebAppShop.csproj" />
 </Solution>
