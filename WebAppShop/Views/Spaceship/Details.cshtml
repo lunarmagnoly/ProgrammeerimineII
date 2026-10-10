@@ -62,6 +62,24 @@
         </div>
     </dl>
 
+    
+    @if (Model.FileToApiDtos != null && Model.FileToApiDtos.Any())
+    {
+        <h4>Spaceship Images</h4>
+
+        <div class="row">
+            @foreach (var image in Model.FileToApiDtos)
+            {
+                <div class="col-md-3 mb-3">
+                    <img src="@image.ExistingFilePath"
+                         class="img-fluid rounded"
+                         alt="Spaceship image" />
+                </div>
+            }
+        </div>
+    }
+
+
     <a asp-action="Index" asp-controller="spaceship" class="btn btn-danger">Back to List</a>
 
 </div>

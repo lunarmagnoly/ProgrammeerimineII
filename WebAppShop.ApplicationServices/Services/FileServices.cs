@@ -22,36 +22,55 @@ namespace WebAppShop.ApplicationServices.Services
             _webHost = webHost;
         }
 
+
         public void FilesToApi(SpaceshipDto dto, Spaceship domain)
         {
-            //kindlasti peab ankeedil olema üks fail
+            // Kontrollime, kas failid on lisatud
             if (dto.Files != null && dto.Files.Count > 0)
             {
-                //kui ei ole wwwroot-s multipleFileUpload directoryt
-                if (!Directory.Exists(_webHost.ContentRootPath + "\\wwwroot\\multipleFileUpload\\"))
+                string uploadsFolder = Path.Combine(
+                    _webHost.ContentRootPath,
+                    "wwwroot",
+                    "multipleFileUpload"
+                );
+
+                // Loome kausta, kui seda veel ei ole
+                if (!Directory.Exists(uploadsFolder))
                 {
-                    //, siis tee directory wwwrooti alla
-                    Directory.CreateDirectory(_webHost.ContentRootPath + "\\wwwroot\\multipleFileUpload\\");
+                    Directory.CreateDirectory(uploadsFolder);
                 }
 
                 foreach (var file in dto.Files)
                 {
-                    //meil on vaja teha muutuja nimega uploadsFolder.
-                    //sinna muutuja taha on vaja Path kombineerida
-                    string uploadsFolder = Path.Combine(_webHost.ContentRootPath, "wwwroot", "multipleFileUpload");
-                    //igale failile unikaalne Guid selle nime ette
-                    string uniqueFileName = Guid.NewGuid().ToString() + "_" + file.Name;
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    // Loome failile unikaalse nime
+                    string uniqueFileName = Guid.NewGuid().ToString()
+                        + "_" + Path.GetFileName(file.FileName);
 
+                    string filePath = Path.Combine(
+                        uploadsFolder,
+                        uniqueFileName
+                    );
+
+                    // Salvestame faili
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         file.CopyTo(fileStream);
-
-                        //domaini teha FileToApi
-                        //FileToApi
                     }
+
+                    // Salvestame faili tee andmebaasi
+                    FileToApi image = new FileToApi
+                    {
+                        Id = Guid.NewGuid(),
+                        ExistingFilePath = "/multipleFileUpload/" + uniqueFileName,
+                        SpaceshipId = domain.Id
+                    };
+
+                    _context.FileToApis.Add(image);
                 }
+
+                _context.SaveChanges();
             }
         }
+
     }
 }

@@ -12,13 +12,14 @@ namespace WebAppShop.ApplicationServices.Services
     public class SpaceshipServices : ISpaceshipServices
     {
         private readonly WebAppShopContext _context;
+        private readonly IFileServices _fileServices;
 
-        public SpaceshipServices
-            (
-                WebAppShopContext context
-            )
+        public SpaceshipServices(
+            WebAppShopContext context,
+            IFileServices fileServices)
         {
             _context = context;
+            _fileServices = fileServices;
         }
 
         public async Task<Spaceship> Create(SpaceshipDto dto)
@@ -43,6 +44,11 @@ namespace WebAppShop.ApplicationServices.Services
             await _context.Spaceships.AddAsync(domain);
             await _context.SaveChangesAsync();
 
+            if (dto.Files != null && dto.Files.Count > 0)
+            {
+                _fileServices.FilesToApi(dto, domain);
+            }
+
             return domain;
         }
 
@@ -53,7 +59,7 @@ namespace WebAppShop.ApplicationServices.Services
             var result = await _context.Spaceships
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            return result;
+            return result ?? throw new KeyNotFoundException("Spaceship not found.");
         }
 
         public async Task<Spaceship> Update(SpaceshipDto dto)
@@ -79,6 +85,11 @@ namespace WebAppShop.ApplicationServices.Services
         {
             var result = await _context.Spaceships
                 .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (result == null)
+            {
+                throw new KeyNotFoundException("Spaceship not found.");
+            }
 
             _context.Spaceships.Remove(result);
             await _context.SaveChangesAsync();

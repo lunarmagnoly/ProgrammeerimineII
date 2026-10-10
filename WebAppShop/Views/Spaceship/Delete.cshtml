@@ -63,6 +63,23 @@
     </dl>
 
     <hr />
+
+    @if (Model.FileToApiDtos != null && Model.FileToApiDtos.Any())
+    {
+        <h4>Spaceship Images</h4>
+
+        <div class="row">
+            @foreach (var image in Model.FileToApiDtos)
+            {
+                <div class="col-md-3 mb-3">
+                    <img src="@Url.Content(image.ExistingFilePath)"
+                         class="img-fluid rounded"
+                         alt="Spaceship image" />
+                </div>
+            }
+        </div>
+    }
+
     <form asp-action="DeleteConfirmation">
         <input type="hidden" asp-for="Id"/>
         <input type="submit" value="Delete" class="btn btn-danger"/>

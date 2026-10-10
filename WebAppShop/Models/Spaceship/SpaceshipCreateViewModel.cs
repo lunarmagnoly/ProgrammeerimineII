@@ -1,4 +1,6 @@
-﻿namespace WebAppShop.Models.Spaceship
+﻿using Microsoft.AspNetCore.Http;
+
+namespace WebAppShop.Models.Spaceship
 {
     public class SpaceshipCreateViewModel
     {
@@ -11,5 +13,7 @@
 
         public DateTime? CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
+
+        public List<IFormFile> Files { get; set; } = new List<IFormFile>();
     }
 }

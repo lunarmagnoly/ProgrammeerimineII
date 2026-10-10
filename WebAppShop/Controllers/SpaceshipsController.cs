@@ -65,7 +65,8 @@ namespace WebAppShop.Controllers
                 Classification = vm.Classification,
                 BuiltDate = vm.BuiltDate,
                 Crew = vm.Crew,
-                EnginePower = vm.EnginePower
+                EnginePower = vm.EnginePower,
+                Files = vm.Files
             };
 
             //kutsuda teenuse meetodit, mis salvestab andmed andmebaasi
@@ -102,7 +103,15 @@ namespace WebAppShop.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
-
+            vm.FileToApiDtos = _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(x => new FileToApiDto
+                {
+                    Id = x.Id,
+                    ExistingFilePath = x.ExistingFilePath,
+                    SpaceshipId = x.SpaceshipId
+                })
+                .ToList();
             return View(vm);
         }
 
@@ -175,7 +184,15 @@ namespace WebAppShop.Controllers
             vm.EnginePower = spaceship.EnginePower;
             vm.CreatedAt = spaceship.CreatedAt;
             vm.ModifiedAt = spaceship.ModifiedAt;
-
+            vm.FileToApiDtos = _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(x => new FileToApiDto
+                {
+                    Id = x.Id,
+                    ExistingFilePath = x.ExistingFilePath,
+                    SpaceshipId = x.SpaceshipId
+                })
+                .ToList();
             return View(vm);
         }
 

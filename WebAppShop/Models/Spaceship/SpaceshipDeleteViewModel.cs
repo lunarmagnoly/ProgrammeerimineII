@@ -1,4 +1,7 @@
-﻿namespace WebAppShop.Models.Spaceship
+﻿
+using WebAppShop.Core.Dto;
+
+namespace WebAppShop.Models.Spaceship
 {
     public class SpaceshipDeleteViewModel
     {
@@ -11,5 +14,6 @@
 
         public DateTime? CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
+        public List<FileToApiDto> FileToApiDtos { get; set; } = new();
     }
 }

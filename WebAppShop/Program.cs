@@ -17,6 +17,8 @@ namespace WebAppShop
 
             builder.Services.AddScoped<ISpaceshipServices, SpaceshipServices>();
 
+            builder.Services.AddScoped<IFileServices, FileServices>();
+
             //selleks, et tuleb installida Microsoft.EntityFrameworkCore.SqlServer
             //ja Microsoft.EntityFrameworkCore.Tools NuGet paketid
             //kui installitud, siis viidata namespacesis Microsoft.EntityFrameworkCore-le
@@ -34,6 +36,7 @@ namespace WebAppShop
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
 
             app.UseAuthorization();
