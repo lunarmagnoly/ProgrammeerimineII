@@ -114,34 +114,49 @@ namespace WebAppShop.Controllers
             return View(vm);
         }
 
+
         [HttpGet]
         public async Task<IActionResult> Update(Guid id)
         {
             var spaceship = await _spaceshipService.DetailsAsync(id);
 
-            if (spaceship == null)
+            var vm = new SpaceshipUpdateViewModel
             {
-                return NotFound();
-            }
+                Id = spaceship.Id,
+                Name = spaceship.Name,
+                Classification = spaceship.Classification,
+                BuiltDate = spaceship.BuiltDate,
+                Crew = spaceship.Crew,
+                EnginePower = spaceship.EnginePower,
+                CreatedAt = spaceship.CreatedAt,
+                ModifiedAt = spaceship.ModifiedAt
+            };
 
-            var vm = new SpaceshipUpdateViewModel();
-
-            vm.Id = spaceship.Id;
-            vm.Name = spaceship.Name;
-            vm.Classification = spaceship.Classification;
-            vm.BuiltDate = spaceship.BuiltDate;
-            vm.Crew = spaceship.Crew;
-            vm.EnginePower = spaceship.EnginePower;
-            vm.CreatedAt = spaceship.CreatedAt;
-            vm.ModifiedAt = spaceship.ModifiedAt;
+            vm.FileToApiDtos = _context.FileToApis
+                .Where(x => x.SpaceshipId == id)
+                .Select(x => new FileToApiDto
+                {
+                    Id = x.Id,
+                    ExistingFilePath = x.ExistingFilePath,
+                    SpaceshipId = x.SpaceshipId
+                })
+                .ToList();
 
             return View(vm);
         }
 
+
+
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(SpaceshipUpdateViewModel vm)
         {
-            var dto = new SpaceshipDto()
+            if (!_context.Spaceships.Any(x => x.Id == vm.Id))
+            {
+                return NotFound();
+            }
+
+            var dto = new SpaceshipDto
             {
                 Id = vm.Id,
                 Name = vm.Name,
@@ -150,18 +165,26 @@ namespace WebAppShop.Controllers
                 EnginePower = vm.EnginePower,
                 BuiltDate = vm.BuiltDate,
                 CreatedAt = vm.CreatedAt,
-                ModifiedAt = vm.ModifiedAt
+                ModifiedAt = vm.ModifiedAt,
+                Files = vm.Files
             };
 
-            var result = await _spaceshipService.Update(dto);
+            await _spaceshipService.Update(dto);
 
-            if (result == null)
+            if (vm.DeleteImageIds != null && vm.DeleteImageIds.Count > 0)
             {
-                return RedirectToAction(nameof(Index));
+                var validImageIds = _context.FileToApis
+                    .Where(x => x.SpaceshipId == vm.Id
+                             && vm.DeleteImageIds.Contains(x.Id))
+                    .Select(x => x.Id)
+                    .ToList();
+
+                _fileServices.DeleteSelectedFiles(validImageIds);
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = vm.Id });
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Delete(Guid id)

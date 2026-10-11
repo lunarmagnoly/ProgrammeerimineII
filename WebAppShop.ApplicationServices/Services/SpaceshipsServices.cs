@@ -62,6 +62,7 @@ namespace WebAppShop.ApplicationServices.Services
             return result ?? throw new KeyNotFoundException("Spaceship not found.");
         }
 
+
         public async Task<Spaceship> Update(SpaceshipDto dto)
         {
             Spaceship spaceship = new();
@@ -78,8 +79,15 @@ namespace WebAppShop.ApplicationServices.Services
             _context.Spaceships.Update(spaceship);
             await _context.SaveChangesAsync();
 
+            // Uute piltide lisamine
+            if (dto.Files != null && dto.Files.Count > 0)
+            {
+                _fileServices.FilesToApi(dto, spaceship);
+            }
+
             return spaceship;
         }
+
 
         public async Task<Spaceship> Delete(Guid id)
         {

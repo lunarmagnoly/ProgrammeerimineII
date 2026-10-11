@@ -3,10 +3,16 @@
 <h1>Update</h1>
 
 <div>
-    <form method="post" enctype="multipart/form-data">
-        <input asp-for="Id" type="hidden"/>
-        <input asp-for="CreatedAt" type="hidden"/>
-        <input asp-for="ModifiedAt" type="hidden"/>
+    <form asp-action="Update"
+          asp-controller="Spaceship"
+          method="post"
+          enctype="multipart/form-data">
+
+        @Html.AntiForgeryToken()
+
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="CreatedAt" type="hidden" />
+        <input asp-for="ModifiedAt" type="hidden" />
 
         <div class="form-group row">
             <label asp-for="Name" class="col-sm-2 col-form-label"></label>
@@ -43,10 +49,53 @@
             </div>
         </div>
 
-        <input asp-action="Update" asp-controller="spaceship" type="submit" class="btn btn-success" value="Update" />
+        <hr />
 
+        <h4>Images</h4>
+
+        @if (Model.FileToApiDtos != null && Model.FileToApiDtos.Any())
+        {
+            <div class="d-flex flex-wrap gap-3">
+                @foreach (var image in Model.FileToApiDtos)
+                {
+                    <div class="border rounded p-2">
+                        <img src="@image.ExistingFilePath"
+                             alt="Spaceship"
+                             style="width:150px;height:120px;object-fit:cover;" />
+
+                        <div class="form-check mt-2">
+                            <input type="checkbox"
+                                   name="DeleteImageIds"
+                                   value="@image.Id"
+                                   class="form-check-input"
+                                   id="image_@image.Id" />
+                            <label class="form-check-label"
+                                   for="image_@image.Id">
+                                Delete
+                            </label>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p>No images.</p>
+        }
+
+        <hr />
+
+        <div class="form-group mb-3">
+            <label asp-for="Files">Add new images</label>
+            <input asp-for="Files"
+                   type="file"
+                   multiple
+                   accept="image/*"
+                   class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-success">
+            Update
+        </button>
     </form>
 </div>
-
-
-
