@@ -11,18 +11,17 @@ namespace WebAppShop.Controllers
     {
         private readonly ISpaceshipServices _spaceshipService;
         private readonly WebAppShopContext _context;
-        //teha constructor et saaks kasutada teenust, mis on
-        //defineeritud ISpaceshipServices liideses
-        //lisage Context
-        public SpaceshipController
-            (
-                ISpaceshipServices spaceshipService,
-                WebAppShopContext context
-            )
+
+        private readonly IFileServices _fileServices;
+
+        public SpaceshipController(
+            ISpaceshipServices spaceshipService,
+            WebAppShopContext context,
+            IFileServices fileServices)
         {
             _spaceshipService = spaceshipService;
             _context = context;
-
+            _fileServices = fileServices;
         }
 
 
@@ -208,5 +207,30 @@ namespace WebAppShop.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteSelectedImages(Guid spaceshipId, List<Guid> imageIds)
+        {
+            if (!_context.Spaceships.Any(x => x.Id == spaceshipId))
+            {
+                return NotFound();
+            }
+
+            if (imageIds != null && imageIds.Count > 0)
+            {
+                var validImageIds = _context.FileToApis
+                    .Where(x => x.SpaceshipId == spaceshipId
+                             && imageIds.Contains(x.Id))
+                    .Select(x => x.Id)
+                    .ToList();
+
+                _fileServices.DeleteSelectedFiles(validImageIds);
+            }
+
+            return RedirectToAction(nameof(Details), new { id = spaceshipId });
+        }
+
     }
 }

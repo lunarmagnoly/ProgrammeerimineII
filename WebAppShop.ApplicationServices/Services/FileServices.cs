@@ -72,5 +72,65 @@ namespace WebAppShop.ApplicationServices.Services
             }
         }
 
+
+        public void DeleteSpaceshipFiles(Guid spaceshipId)
+        {
+            var images = _context.FileToApis
+                .Where(x => x.SpaceshipId == spaceshipId)
+                .ToList();
+
+            foreach (var image in images)
+            {
+                if (!string.IsNullOrEmpty(image.ExistingFilePath))
+                {
+                    string filePath = Path.Combine(
+                        _webHost.ContentRootPath,
+                        "wwwroot",
+                        "multipleFileUpload",
+                        Path.GetFileName(image.ExistingFilePath)
+                    );
+
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+            }
+
+            _context.FileToApis.RemoveRange(images);
+            _context.SaveChanges();
+        }
+
+
+        public void DeleteSelectedFiles(List<Guid> imageIds)
+        {
+            var images = _context.FileToApis
+                .Where(x => imageIds.Contains(x.Id))
+                .ToList();
+
+            foreach (var image in images)
+            {
+                if (!string.IsNullOrEmpty(image.ExistingFilePath))
+                {
+                    string filePath = Path.Combine(
+                        _webHost.ContentRootPath,
+                        "wwwroot",
+                        "multipleFileUpload",
+                        Path.GetFileName(image.ExistingFilePath)
+                    );
+
+                    if (File.Exists(filePath))
+                    {
+                        File.Delete(filePath);
+                    }
+                }
+            }
+
+            _context.FileToApis.RemoveRange(images);
+            _context.SaveChanges();
+        }
+
+
+
     }
 }

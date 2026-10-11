@@ -8,7 +8,11 @@ namespace WebAppShop.Core.ServiceInterface
     {
         // Lisa fotod
         void FilesToApi(SpaceshipDto dto, Spaceship domain);
-
         
+        // Kustuta kosmoselaeva fotod
+        void DeleteSpaceshipFiles(Guid spaceshipId);
+
+        // Kustuta valitud fotod
+        void DeleteSelectedFiles(List<Guid> imageIds);
     }
 }
